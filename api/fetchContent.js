@@ -12,7 +12,9 @@ module.exports = async (req, res) => {
 
         response.on('end', () => {
             // Modify data as needed
-            data = data.replace(/some pattern/g, 'replacement');
+            const originalDomain = 'https://lordne.vercel.app';
+data = data.replace(/href="\//g, `href="${originalDomain}/`);
+
 
             res.status(200).send(data);
         });
