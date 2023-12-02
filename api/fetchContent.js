@@ -1,6 +1,6 @@
-module.exports = async (req, res) => {
-    const https = require('https');
+const https = require('https');
 
+module.exports = async (req, res) => {
     const targetUrl = 'https://lordne.vercel.app/'; // Replace with your target URL
 
     https.get(targetUrl, (response) => {
@@ -11,10 +11,11 @@ module.exports = async (req, res) => {
         });
 
         response.on('end', () => {
-            // Modify data as needed
+            // Replace relative URLs with absolute URLs
             const originalDomain = 'https://lordne.vercel.app';
-data = data.replace(/href="\//g, `href="${originalDomain}/`);
-
+            data = data.replace(/href="\/(.*?)"/g, `href="${originalDomain}/$1"`);
+            data = data.replace(/src="\/(.*?)"/g, `src="${originalDomain}/$1"`);
+            data = data.replace(/url\(\/(.*?)\)/g, `url(${originalDomain}/$1)`);
 
             res.status(200).send(data);
         });
