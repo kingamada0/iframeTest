@@ -1,31 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        html, body, iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-    </style>
-    <title>First Iframe - A3 Internet Solutions</title>
-    <script>
-        // Function to fetch and display content from the serverless function
-        function fetchAndDisplayContent() {
-            fetch('https://iframe-tests.vercel.app/api/fetchContent')
-                .then(response => response.text())
-                .then(data => {
-                    // Use the data in your application
-                    document.getElementById('modifiedContent').innerHTML = data;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    </script>
+    <title>Your Application</title>
 </head>
-<body onload="fetchAndDisplayContent();">
-    <div id="modifiedContent">Loading content...</div>
+<body>
+    <div id="content">Loading content...</div>
+    <script>
+        fetch('https://iframe-tests.vercel.app/api/fetchContent')
+            .then(response => response.text())
+            .then(data => {
+                // Display the fetched data in the 'content' div
+                document.getElementById('content').innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html>
