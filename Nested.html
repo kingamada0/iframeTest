@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Middle Iframe</title>
     <style>
         html, body, iframe {
             width: 100%;
@@ -12,29 +11,21 @@
             overflow: hidden;
         }
     </style>
-</head>
-<body>
-    <iframe id="innermostIframe" src="https://lordne.vercel.app"></iframe>
-
+    <title>First Iframe - A3 Internet Solutions</title>
     <script>
-        window.onload = function() {
-       try {
-        // Get the innermost iframe's document
-        var innerIframe = document.getElementById('innermostIframe');
-        var innerDoc = innerIframe.contentDocument || innerIframe.contentWindow.document;
-
-        // Extract the HTML content from the innermost iframe
-        var innerHTMLContent = innerDoc.documentElement.outerHTML;
-
-        // Modify the HTML content as needed
-        var modifiedContent = innerHTMLContent.replace(/Some text or pattern to change/g, 'New text or content');
-
-        // Replace the content of the middle iframe (or another container) with the modified content
-        document.body.innerHTML = modifiedContent; // Replace 'document.body' with a specific container if needed
-    } catch (e) {
-        console.error("Error in accessing or modifying iframe content: ", e);
-    }
-        };
+        // Function to fetch and display content from the serverless function
+        function fetchAndDisplayContent() {
+            fetch('https://your-vercel-project-url/api/fetchContent')
+                .then(response => response.text())
+                .then(data => {
+                    // Use the data in your application
+                    document.getElementById('modifiedContent').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>
+</head>
+<body onload="fetchAndDisplayContent();">
+    <div id="modifiedContent">Loading content...</div>
 </body>
 </html>
