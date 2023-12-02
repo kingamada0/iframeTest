@@ -1,5 +1,5 @@
 const https = require('https');
-const { JSDOM } = require('jsdom');  // Ensure JSDOM is installed
+const { JSDOM } = require('jsdom'); // Ensure JSDOM is installed
 
 module.exports = async (req, res) => {
     const targetUrl = 'https://lordne.vercel.app/';
@@ -16,14 +16,18 @@ module.exports = async (req, res) => {
                 const dom = new JSDOM(rawData);
                 const document = dom.window.document;
 
-                // Modify relative URLs to absolute
+                // Correctly handling base URL for relative paths
+                const baseUrl = new URL(targetUrl);
+
+                // Modify relative URLs to absolute in <link>, <script>, and <img> tags
                 const elements = document.querySelectorAll('link[href], script[src], img[src]');
                 elements.forEach(el => {
                     const attribute = el.tagName === 'LINK' ? 'href' : 'src';
                     let url = el.getAttribute(attribute);
 
+                    // Check if the URL is relative and prepend the base URL
                     if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
-                        el.setAttribute(attribute, targetUrl + url);
+                        el.setAttribute(attribute, new URL(url, baseUrl).href);
                     }
                 });
 
