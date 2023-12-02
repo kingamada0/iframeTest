@@ -16,16 +16,14 @@ module.exports = async (req, res) => {
                 const dom = new JSDOM(rawData);
                 const document = dom.window.document;
 
-                // Process all <a>, <link>, <script>, and <img> elements
-                const elements = document.querySelectorAll('a[href], link[href], script[src], img[src]');
+                // Modify relative URLs to absolute
+                const elements = document.querySelectorAll('link[href], script[src], img[src]');
                 elements.forEach(el => {
-                    const attr = el.hasAttribute('href') ? 'href' : 'src';
-                    let url = el.getAttribute(attr);
+                    const attribute = el.tagName === 'LINK' ? 'href' : 'src';
+                    let url = el.getAttribute(attribute);
 
-                    // Make sure the URL is relative
-                    if (url && !url.startsWith('http') && !url.startsWith('//')) {
-                        url = new URL(url, targetUrl).href;
-                        el.setAttribute(attr, url);
+                    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                        el.setAttribute(attribute, targetUrl + url);
                     }
                 });
 
