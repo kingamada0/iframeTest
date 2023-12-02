@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Middle Iframe</title>
+</head>
+<body>
+    <iframe id="innermostIframe" src="https://lordne.vercel.app/"></iframe>
+
+    <script>
+        window.onload = function() {
+            try {
+                var innerIframe = document.getElementById('innermostIframe');
+                var innerDoc = innerIframe.contentDocument || innerIframe.contentWindow.document;
+                // Attempt to modify the content of the innermost iframe
+                innerDoc.body.innerHTML = "<h1>Modified by Middle Iframe</h1>";
+            } catch (e) {
+                console.error("Error in modifying the innermost iframe: ", e);
+            }
+        };
+    </script>
+</body>
+</html>
