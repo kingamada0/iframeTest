@@ -13,9 +13,9 @@ module.exports = async (req, res) => {
         response.on('end', () => {
             // Replace relative URLs with absolute URLs
             const originalDomain = 'https://lordne.vercel.app';
-            data = data.replace(/href="\/(.*?)"/g, `href="${originalDomain}/$1"`);
-            data = data.replace(/src="\/(.*?)"/g, `src="${originalDomain}/$1"`);
-            data = data.replace(/url\(\/(.*?)\)/g, `url(${originalDomain}/$1)`);
+            data = data.replace(/href="\/?(.*?)"/g, `href="${originalDomain}/$1"`);
+            data = data.replace(/src="\/?(.*?)"/g, `src="${originalDomain}/$1"`);
+            data = data.replace(/url\(\/?(.*?)\)/g, `url(${originalDomain}/$1)`);
 
             res.status(200).send(data);
         });
