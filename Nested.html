@@ -18,14 +18,22 @@
 
     <script>
         window.onload = function() {
-            try {
-                var innerIframe = document.getElementById('innermostIframe');
-                var innerDoc = innerIframe.contentDocument || innerIframe.contentWindow.document;
-                // Attempt to modify the content of the innermost iframe
-                innerDoc.body.innerHTML = "<h1>Modified by Middle Iframe</h1>";
-            } catch (e) {
-                console.error("Error in modifying the innermost iframe: ", e);
-            }
+       try {
+        // Get the innermost iframe's document
+        var innerIframe = document.getElementById('innermostIframe');
+        var innerDoc = innerIframe.contentDocument || innerIframe.contentWindow.document;
+
+        // Extract the HTML content from the innermost iframe
+        var innerHTMLContent = innerDoc.documentElement.outerHTML;
+
+        // Modify the HTML content as needed
+        var modifiedContent = innerHTMLContent.replace(/Some text or pattern to change/g, 'New text or content');
+
+        // Replace the content of the middle iframe (or another container) with the modified content
+        document.body.innerHTML = modifiedContent; // Replace 'document.body' with a specific container if needed
+    } catch (e) {
+        console.error("Error in accessing or modifying iframe content: ", e);
+    }
         };
     </script>
 </body>
