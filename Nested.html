@@ -2,9 +2,19 @@
 <html>
 <head>
     <title>Middle Iframe</title>
+    <style>
+        html, body, iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-    <iframe id="innermostIframe" src="https://lordne.vercel.app/"></iframe>
+    <iframe id="innermostIframe" src="https://lordne.vercel.app"></iframe>
 
     <script>
         window.onload = function() {
