@@ -11,11 +11,19 @@ module.exports = async (req, res) => {
         });
 
         response.on('end', () => {
-            // Replace relative URLs with absolute URLs
             const originalDomain = 'https://lordne.vercel.app';
-            data = data.replace(/href="\/?(.*?)"/g, `href="${originalDomain}/$1"`);
-            data = data.replace(/src="\/?(.*?)"/g, `src="${originalDomain}/$1"`);
-            data = data.replace(/url\(\/?(.*?)\)/g, `url(${originalDomain}/$1)`);
+
+            // Function to check if URL is absolute
+            const isAbsoluteURL = (url) => /^(?:[a-z]+:)?\/\//i.test(url);
+
+            // Replace relative URLs with absolute URLs
+            data = data.replace(/(href|src|url)\("?'?\/?(.*?)"?'?\)/g, (match, p1, p2) => {
+                if (isAbsoluteURL(p2)) {
+                    return `${p1}("${p2}")`; // Return absolute URL unchanged
+                } else {
+                    return `${p1}("${originalDomain}/${p2}")`; // Prepend original domain to relative URL
+                }
+            });
 
             res.status(200).send(data);
         });
