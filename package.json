@@ -1,0 +1,14 @@
+{
+  "name": "iframeTest",
+  "version": "1.0.0",
+  "description": "A description of your project",
+  "main": "index.js",
+  "dependencies": {
+    "jsdom": "^16.6.0"  // Replace with the latest version or the version you need
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
