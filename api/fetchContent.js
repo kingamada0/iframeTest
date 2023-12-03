@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
                 const scriptElements = document.querySelectorAll('script[src]');
                 scriptElements.forEach(script => {
                     const originalSrc = script.getAttribute('src');
-                    script.setAttribute('src', `https://https://lord-test.vercel.app/api/yourFunction${originalSrc}`);
+                    script.setAttribute('src', `https://lord-test.vercel.app/api/yourFunction${originalSrc}`);
                 });
 
                 res.status(200).send(dom.serialize());
