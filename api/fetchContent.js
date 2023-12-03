@@ -1,44 +1,31 @@
 const https = require('https');
-const { JSDOM } = require('jsdom'); // Ensure JSDOM is installed
 
 module.exports = async (req, res) => {
-    const targetUrl = 'https://lordne.vercel.app/';
+    let targetUrl;
+
+    // Check if the request is for the HTML page or the JS file
+    if (req.url.includes('/script.js')) {
+        targetUrl = 'https://lordne.vercel.app/script.js';  // Path to the original JS file
+    } else {
+        targetUrl = 'https://lordne.vercel.app/';  // Path to the original HTML page
+    }
 
     https.get(targetUrl, (response) => {
-        let rawData = '';
+        response.setEncoding('utf8');
+        let data = '';
 
         response.on('data', (chunk) => {
-            rawData += chunk;
+            data += chunk;
         });
 
         response.on('end', () => {
-            try {
-                const dom = new JSDOM(rawData);
-                const document = dom.window.document;
-
-                // Correctly handling base URL for relative paths
-                const baseUrl = new URL(targetUrl);
-
-                // Modify relative URLs to absolute in <link>, <script>, and <img> tags
-                const elements = document.querySelectorAll('link[href], script[src], img[src]');
-                elements.forEach(el => {
-                    const attribute = el.tagName === 'LINK' ? 'href' : 'src';
-                    let url = el.getAttribute(attribute);
-
-                    // Check if the URL is relative and prepend the base URL
-                    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
-                        el.setAttribute(attribute, new URL(url, baseUrl).href);
-                    }
-                });
-
-                res.status(200).send(dom.serialize());
-            } catch (error) {
-                console.error('Error processing HTML:', error);
-                res.status(500).send('Error processing HTML.');
+            if (req.url.includes('/script.js')) {
+                // Set appropriate headers for JavaScript content
+                res.setHeader('Content-Type', 'application/javascript');
             }
+            res.status(200).send(data);
         });
     }).on('error', (e) => {
-        console.error('Error fetching URL:', e);
-        res.status(500).send('Error fetching URL.');
+        res.status(500).send('Error: ' + e.message);
     });
 };
