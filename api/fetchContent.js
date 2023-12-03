@@ -1,38 +1,52 @@
 const https = require('https');
 
 module.exports = async (req, res) => {
-    // Determine the target URL based on the request
-    let targetUrl = 'https://lordne.vercel.app';
-    if (req.url.includes('.css') || req.url.includes('.js')) {
-        targetUrl += req.url; // For CSS/JS files
+    const baseDomain = 'https://lordne.vercel.app';
+    let targetUrl = baseDomain;
+
+    // Determine if the request is for the main HTML, a JS, or a CSS file
+    if (req.url.endsWith('.js')) {
+        targetUrl += '/path/to/your/javascript.js'; // Adjust the path
+    } else if (req.url.endsWith('.css')) {
+        targetUrl += '/path/to/your/styles.css'; // Adjust the path
     }
 
     https.get(targetUrl, (response) => {
-        let contentType = response.headers['content-type'];
-        let data = '';
+        let rawData = '';
 
         response.on('data', (chunk) => {
-            data += chunk;
+            rawData += chunk;
         });
 
         response.on('end', () => {
-            // Set the appropriate content type for the response
-            res.setHeader('Content-Type', contentType);
-
-            // If it's the HTML page, modify it as needed
-            if (!req.url.includes('.css') && !req.url.includes('.js')) {
-                data = modifyHtml(data);
+            try {
+                if (req.url.endsWith('.js')) {
+                    // Serve JavaScript with correct content type
+                    res.setHeader('Content-Type', 'application/javascript');
+                    res.status(200).send(rawData);
+                } else if (req.url.endsWith('.css')) {
+                    // Serve CSS with correct content type
+                    res.setHeader('Content-Type', 'text/css');
+                    res.status(200).send(rawData);
+                } else {
+                    // Process and modify HTML content
+                    rawData = modifyHtml(rawData, baseDomain);
+                    res.status(200).send(rawData);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                res.status(500).send('Error processing request.');
             }
-            
-            res.status(200).send(data);
         });
     }).on('error', (e) => {
-        res.status(500).send('Error: ' + e.message);
+        res.status(500).send('Error fetching URL: ' + e.message);
     });
 };
 
-function modifyHtml(html) {
-    // Modify the HTML content as needed, e.g., updating asset URLs
-    // This is where you would implement your HTML modification logic
+function modifyHtml(html, baseDomain) {
+    // Modify HTML here as needed
+    // For example, updating asset URLs to be served via this serverless function
+    html = html.replace(/href="\/path\/to\/your\/(.*?)\.css"/g, `href="${baseDomain}/$1.css"`);
+    html = html.replace(/src="\/path\/to\/your\/(.*?)\.js"/g, `src="${baseDomain}/$1.js"`);
     return html;
 }
