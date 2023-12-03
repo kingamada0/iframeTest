@@ -5,9 +5,11 @@ module.exports = async (req, res) => {
     const baseDomain = 'https://lordne.vercel.app';
     let targetUrl = baseDomain;
 
-    // Check if the request is for a specific asset like a JS file
-    if (req.url.includes('/script.js')) {
-        targetUrl += '/script.js';  // Append the specific script's path
+    // Determine whether the request is for the HTML, a JS file, or a CSS file
+    if (req.url.endsWith('.js')) {
+        targetUrl += req.url;  // Append the script's path
+    } else if (req.url.endsWith('.css')) {
+        targetUrl += req.url;  // Append the CSS file's path
     }
 
     https.get(targetUrl, (response) => {
@@ -18,20 +20,29 @@ module.exports = async (req, res) => {
         });
 
         response.on('end', () => {
-            if (req.url.includes('/script.js')) {
+            if (req.url.endsWith('.js')) {
                 // Serve the JS file
                 res.setHeader('Content-Type', 'application/javascript');
+                res.status(200).send(data);
+            } else if (req.url.endsWith('.css')) {
+                // Serve the CSS file
+                res.setHeader('Content-Type', 'text/css');
                 res.status(200).send(data);
             } else {
                 // Process the HTML content
                 const dom = new JSDOM(data);
                 const document = dom.window.document;
 
-                // Modify the script src to point to the serverless function
-                const scriptElements = document.querySelectorAll('script[src]');
-                scriptElements.forEach(script => {
-                    const originalSrc = script.getAttribute('src');
-                    script.setAttribute('src', `https://lord-test.vercel.app/api/yourFunction${originalSrc}`);
+                // Modify script src and link href to point to the serverless function
+                const assetElements = document.querySelectorAll('script[src], link[rel="stylesheet"][href]');
+                assetElements.forEach(el => {
+                    if (el.tagName === 'SCRIPT') {
+                        const originalSrc = el.getAttribute('src');
+                        el.setAttribute('src', `https://lord-test.vercel.app/api/yourFunction${originalSrc}`);
+                    } else if (el.tagName === 'LINK') {
+                        const originalHref = el.getAttribute('href');
+                        el.setAttribute('href', `https://lord-test.vercel.app/api/yourFunction${originalHref}`);
+                    }
                 });
 
                 res.status(200).send(dom.serialize());
