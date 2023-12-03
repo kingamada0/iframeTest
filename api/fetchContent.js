@@ -38,10 +38,10 @@ module.exports = async (req, res) => {
                 assetElements.forEach(el => {
                     if (el.tagName === 'SCRIPT') {
                         const originalSrc = el.getAttribute('src');
-                        el.setAttribute('src', `https://lord-test.vercel.app/api/script${originalSrc}`);
+                        el.setAttribute('src', `https://lord-test.vercel.app/api/${originalSrc}`);
                     } else if (el.tagName === 'LINK') {
                         const originalHref = el.getAttribute('href');
-                        el.setAttribute('href', `https://lord-test.vercel.app/api/styles${originalHref}`);
+                        el.setAttribute('href', `https://lord-test.vercel.app/api/${originalHref}`);
                     }
                 });
 
